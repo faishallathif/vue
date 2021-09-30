@@ -4,7 +4,6 @@
     v-model="valid"
     lazy-validation
   >
-
     <v-text-field
       v-model="email"
       :rules="emailRules"
@@ -12,6 +11,7 @@
       required
     ></v-text-field>
     <v-text-field
+    v-model="password"
             :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
             :rules="passwordRules"
             :type="show2 ? 'text' : 'password'"
@@ -30,11 +30,13 @@
   </v-form>
 </template>
 <script>
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
   export default {
     data: () => ({
       valid: true,
         show2: false,
-        password: 'Password',
+        password: '',
         passwordRules:[
              value => !!value || 'Required.',
         ],
@@ -47,7 +49,21 @@
 
     methods: {
       login () {
-        this.$refs.form.login()
+        //   console.log(this.email)
+        //   console.log(this.password)
+        firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+        .then((userCredential) => {
+            // Signed in
+            var user = userCredential.user;
+            console.log(user)
+            // ...
+        })
+        .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorCode)
+            console.log(errorMessage)
+        });
       },
       reset () {
         this.$refs.form.reset()
